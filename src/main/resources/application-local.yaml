@@ -21,3 +21,6 @@ spring:
   kafka:
     producer:
       bootstrap-servers: localhost:9092
+
+product:
+  base-url: http://localhost:8083

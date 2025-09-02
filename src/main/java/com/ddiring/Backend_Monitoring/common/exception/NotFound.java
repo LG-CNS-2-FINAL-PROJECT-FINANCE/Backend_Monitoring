@@ -1,4 +1,4 @@
-package com.ddiring.backend_market.common.exception;
+package com.ddiring.Backend_Monitoring.common.exception;
 
 public class NotFound extends ClientError {
     public NotFound(String message) {

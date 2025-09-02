@@ -1,6 +1,5 @@
-package com.ddiring.Backend_Monitoring.dto;
+package com.ddiring.Backend_Monitoring.dto.response;
 
-import com.ddiring.Backend_Monitoring.entity.Monitoring;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,12 +9,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AllReportDto {
+public class ReportDetail {
 
-    private Integer reportNo;
-    private String writerId;
     private String reportId;
+    private String writerId;
     private String projectId;
     private Integer reportType;
-    private Monitoring.Status status;
+    private String content;
 }

@@ -1,10 +1,8 @@
-package com.ddiring.backend_market.common.exception.handler;
+package com.ddiring.Backend_Monitoring.common.exception.handler;
 
-
-
-import com.ddiring.backend_market.common.exception.CustomException;
-import com.ddiring.backend_market.common.exception.ErrorCode;
-import com.ddiring.backend_market.common.response.ApiResponse;
+import com.ddiring.Backend_Monitoring.common.exception.CustomException;
+import com.ddiring.Backend_Monitoring.common.exception.ErrorCode;
+import com.ddiring.Backend_Monitoring.common.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,6 +23,5 @@ public class ExceptionResponseHandler {
                 .body(ApiResponse.error(message, errorCode));
 
     }
-
 
 }

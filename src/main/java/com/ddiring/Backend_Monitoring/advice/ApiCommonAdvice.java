@@ -1,9 +1,9 @@
-package com.ddiring.backend_market.advice;
+package com.ddiring.Backend_Monitoring.advice;
 
-import com.ddiring.backend_market.common.dto.ApiResponseDto;
-import com.ddiring.backend_market.common.exception.BadParameter;
-import com.ddiring.backend_market.common.exception.ClientError;
-import com.ddiring.backend_market.common.exception.NotFound;
+import com.ddiring.Backend_Monitoring.common.dto.ApiResponseDto;
+import com.ddiring.Backend_Monitoring.common.exception.BadParameter;
+import com.ddiring.Backend_Monitoring.common.exception.ClientError;
+import com.ddiring.Backend_Monitoring.common.exception.NotFound;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package com.ddiring.backend_market.common.response;
+package com.ddiring.Backend_Monitoring.common.response;
 
 public enum ApiStatus {
     SUCCESS,ERROR

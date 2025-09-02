@@ -1,14 +1,14 @@
-package com.ddiring.backend_market.common.util;
+package com.ddiring.Backend_Monitoring.common.util;
 
-import com.ddiring.backend_market.common.exception.CustomException;
-import com.ddiring.backend_market.common.exception.ErrorCode;
+import com.ddiring.Backend_Monitoring.common.exception.CustomException;
+import com.ddiring.Backend_Monitoring.common.exception.ErrorCode;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class GatewayRequestHeaderUtils {
     public static String getRequestHeaderParamAsString(String key) {
-        ServletRequestAttributes requestAttributes =
-                (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
+                .currentRequestAttributes();
         return requestAttributes.getRequest().getHeader(key);
     }
 

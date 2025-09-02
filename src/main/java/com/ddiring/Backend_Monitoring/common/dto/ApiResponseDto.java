@@ -1,4 +1,4 @@
-package com.ddiring.backend_market.common.dto;
+package com.ddiring.Backend_Monitoring.common.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
