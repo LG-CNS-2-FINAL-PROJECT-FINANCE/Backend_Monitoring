@@ -19,8 +19,12 @@ spring:
     open-in-view: false
 
   kafka:
-    producer:
-      bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:9092
+    streams:
+      application-id: fraud-detection-app
+      properties:
+        default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        default.value.serde: org.springframework.kafka.support.serializer.JsonSerde
 
 product:
   base-url: http://localhost:8083
