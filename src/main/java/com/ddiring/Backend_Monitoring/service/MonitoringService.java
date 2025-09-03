@@ -1,7 +1,7 @@
 package com.ddiring.Backend_Monitoring.service;
 
 import com.ddiring.Backend_Monitoring.api.product.ProductClient;
-import com.ddiring.Backend_Monitoring.api.product.ProductDto;
+import com.ddiring.Backend_Monitoring.api.product.ProductDetailDto;
 import com.ddiring.Backend_Monitoring.dto.request.ReportDto;
 import com.ddiring.Backend_Monitoring.dto.response.ReportDetail;
 import com.ddiring.Backend_Monitoring.dto.response.ReportListDto;
@@ -62,7 +62,7 @@ public class MonitoringService {
 
         // 신고
         public ReportDetail createReport(String writerId, ReportDto dto) {
-                ProductDto product = productClient.getProduct(dto.getProjectId()).getBody();
+                ProductDetailDto product = productClient.getProduct(dto.getProjectId()).getBody();
                 if (product == null) {
                         throw new IllegalStateException("상품 정보가 없습니다.");
                 }
