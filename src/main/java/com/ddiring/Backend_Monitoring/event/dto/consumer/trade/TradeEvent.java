@@ -1,4 +1,4 @@
-package com.ddiring.Backend_Monitoring.event.dto.trade;
+package com.ddiring.Backend_Monitoring.event.dto.consumer.trade;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
