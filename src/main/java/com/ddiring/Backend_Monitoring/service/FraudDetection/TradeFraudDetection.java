@@ -2,7 +2,7 @@ package com.ddiring.Backend_Monitoring.service.FraudDetection;
 
 import com.ddiring.Backend_Monitoring.event.dto.consumer.trade.TradeRequestAcceptedEvent;
 import com.ddiring.Backend_Monitoring.event.dto.consumer.trade.TradeRequestRejectedEvent;
-import com.ddiring.Backend_Monitoring.event.dto.producer.fraud.TradeHighFailureRateEvent;
+import com.ddiring.Backend_Monitoring.event.dto.producer.fraud.TradeProjectHighFailureRateEvent;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.kstream.*;
 import org.springframework.kafka.support.serializer.JsonSerde;
@@ -12,7 +12,7 @@ import java.util.Objects;
 
 public class TradeFraudDetection {
 
-    public static void detectFailureRate(KStream<String, TradeRequestAcceptedEvent> acceptedStream, KStream<String, TradeRequestRejectedEvent> rejectedStream) {
+    public static void detectProjectFailureRate(KStream<String, TradeRequestAcceptedEvent> acceptedStream, KStream<String, TradeRequestRejectedEvent> rejectedStream) {
         // projectId를 기준으로 키 재설정
         KStream<String, TradeRequestAcceptedEvent> keyedAccepted = acceptedStream.selectKey((key, value) -> value.getPayload().getProjectId());
         KStream<String, TradeRequestRejectedEvent> keyedRejected = rejectedStream.selectKey((key, value) -> value.getPayload().getProjectId());
@@ -47,7 +47,7 @@ public class TradeFraudDetection {
                     String projectId = windowedKey.key(); // Windowed<String>에서 키를 가져옴
                     String description = "High failure rate detected for Trade: " + Objects.requireNonNull(value).failureRate;
 
-                    return TradeHighFailureRateEvent.of(
+                    return TradeProjectHighFailureRateEvent.of(
                             description,
                             projectId,
                             value.failureRate,
@@ -57,5 +57,8 @@ public class TradeFraudDetection {
                     );
                 })
                 .selectKey((windowedKey, value) -> windowedKey.key() + "@" + windowedKey.window().start() + "-" + windowedKey.window().end())
-                .to("TRADE_HIGH_FAILURE_RATE", Produced.with(Serdes.String(), new JsonSerde<>(TradeHighFailureRateEvent.class)));
+                .to("TRADE_HIGH_FAILURE_RATE", Produced.with(Serdes.String(), new JsonSerde<>(TradeProjectHighFailureRateEvent.class)));
     }
+
+
+}

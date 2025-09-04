@@ -13,16 +13,16 @@ import java.util.UUID;
 @SuperBuilder
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class TradeHighFailureRateEvent extends FraudDetectionEvent {
+public class TradeProjectHighFailureRateEvent extends FraudDetectionEvent {
     public static final String TOPIC = "TRADE_HIGH_FAILURE_RATE";
 
-    private TradeHighFailureRatePayload payload;
+    private TradeProjectHighFailureRatePayload payload;
 
     @Getter
     @Builder
     @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
     @AllArgsConstructor
-    public static class TradeHighFailureRatePayload {
+    public static class TradeProjectHighFailureRatePayload {
         private String projectId;
         private Double failureRate;
         private Long failedTradeCount;
@@ -30,14 +30,16 @@ public class TradeHighFailureRateEvent extends FraudDetectionEvent {
         private Long timeWindowMinutes;
     }
 
-    public static TradeHighFailureRateEvent of (String descript, String projectId, Double failureRate, Long failedTradeCount, Long totalTradeCount, Long timeWindowMinutes) {
-        return TradeHighFailureRateEvent.builder()
+    public static TradeProjectHighFailureRateEvent of (String descript, String projectId, Double failureRate, Long failedTradeCount, Long totalTradeCount, Long timeWindowMinutes) {
+        String eventType = TOPIC + ".BASE_BY_PROJECT";
+
+        return TradeProjectHighFailureRateEvent.builder()
                 .eventId(UUID.randomUUID().toString())
-                .eventType(TOPIC)
+                .eventType(eventType)
                 .timestamp(Instant.now())
                 .description(descript)
                 .payload(
-                        TradeHighFailureRatePayload.builder()
+                        TradeProjectHighFailureRatePayload.builder()
                                 .projectId(projectId)
                                 .failureRate(failureRate)
                                 .failedTradeCount(failedTradeCount)

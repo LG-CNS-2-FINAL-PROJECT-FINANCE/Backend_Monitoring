@@ -36,7 +36,7 @@ public class FraudDetectionService {
                     .filter((key, value) -> value instanceof TradeRequestRejectedEvent)
                     .mapValues((key, value) -> (TradeRequestRejectedEvent) value);
 
-            TradeFraudDetection.detectFailureRate(acceptedEvents, rejectedEvents);
+            TradeFraudDetection.detectProjectFailureRate(acceptedEvents, rejectedEvents);
 
         } catch (Exception e) {
             throw new RuntimeException("[FraudDetection] 이상 거래 탐지 설정 중 오류 발생");
