@@ -11,7 +11,7 @@ import org.springframework.kafka.support.serializer.JsonSerde;
 import java.time.Duration;
 import java.util.Objects;
 
-public class TradeFraudDetection {
+public class TradeFailureDetection {
 
     public static void detectProjectFailureRate(KStream<String, TradeRequestAcceptedEvent> acceptedStream, KStream<String, TradeRequestRejectedEvent> rejectedStream) {
         // projectId를 기준으로 키 재설정
