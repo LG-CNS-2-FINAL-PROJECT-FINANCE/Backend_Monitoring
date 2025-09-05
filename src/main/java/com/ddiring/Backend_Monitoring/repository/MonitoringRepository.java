@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface MonitoringRepository extends JpaRepository<Monitoring, Integer> {
     List<Monitoring> findByWriterId(String writerId);
+    List<Monitoring> findByReportId(String reportId);
 }

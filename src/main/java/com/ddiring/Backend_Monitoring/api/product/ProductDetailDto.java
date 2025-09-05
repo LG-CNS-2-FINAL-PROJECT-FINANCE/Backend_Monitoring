@@ -12,5 +12,8 @@ import lombok.Setter;
 public class ProductDetailDto {
 
     private String projectId;
+    private String title;
+
     private String userSeq;
+    private String nickname;
 }

@@ -1,19 +1,43 @@
 package com.ddiring.Backend_Monitoring.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.ddiring.Backend_Monitoring.entity.Monitoring;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ReportDetail {
 
-    private String reportId;
-    private String writerId;
+    private Integer reportNo;
+
     private String projectId;
-    private Integer reportType;
+    private String title;
+
+    private String reportId;
+    private String reportNickname;
+
+    private String writerId;
+    private String writerNickname;
+
+    private Monitoring.ReportType reportType;
     private String content;
+
+    private Monitoring.Status status;
+
+    public static ReportDetail from(Monitoring m) {
+        return ReportDetail.builder()
+                .reportNo(m.getReportNo())
+                .projectId(m.getProjectId())
+                .title(m.getTitle())
+                .reportId(m.getReportId())
+                .reportNickname(m.getReportNickname())
+                .writerId(m.getWriterId())
+                .writerNickname(m.getWriterNickname())
+                .reportType(m.getReportType())
+                .content(m.getContent())
+                .status(m.getStatus())
+                .build();
+    }
 }
