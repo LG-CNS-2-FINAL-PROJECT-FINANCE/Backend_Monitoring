@@ -1,5 +1,6 @@
 package com.ddiring.Backend_Monitoring.service.FraudDetection;
 
+import com.ddiring.Backend_Monitoring.event.dto.consumer.trade.TradeEvent;
 import com.ddiring.Backend_Monitoring.event.dto.consumer.trade.TradeRequestAcceptedEvent;
 import com.ddiring.Backend_Monitoring.event.dto.consumer.trade.TradeRequestRejectedEvent;
 import com.ddiring.Backend_Monitoring.event.dto.producer.fraud.TradeUserHighFailureRateEvent;
@@ -13,7 +14,22 @@ import java.util.Objects;
 
 public class TradeFailureDetection {
 
-    public static void detectProjectFailureRate(KStream<String, TradeRequestAcceptedEvent> acceptedStream, KStream<String, TradeRequestRejectedEvent> rejectedStream) {
+    public static void detectTradeFailure(KStream<String, TradeEvent> events) {
+        // 이벤트 유형에 따라 스트림 분기 및 명확한 캐스팅
+        KStream<String, TradeRequestAcceptedEvent> acceptedEvents = events
+                .filter((key, value) -> value instanceof TradeRequestAcceptedEvent)
+                .mapValues((key, value) -> (TradeRequestAcceptedEvent) value);
+
+        KStream<String, TradeRequestRejectedEvent> rejectedEvents = events
+                .filter((key, value) -> value instanceof TradeRequestRejectedEvent)
+                .mapValues((key, value) -> (TradeRequestRejectedEvent) value);
+
+        detectProjectFailureRate(acceptedEvents, rejectedEvents);
+        detectBuyerFailureRate(acceptedEvents, rejectedEvents);
+        detectSellerFailureRate(acceptedEvents, rejectedEvents);
+    }
+
+    private static void detectProjectFailureRate(KStream<String, TradeRequestAcceptedEvent> acceptedStream, KStream<String, TradeRequestRejectedEvent> rejectedStream) {
         // projectId를 기준으로 키 재설정
         KStream<String, TradeRequestAcceptedEvent> keyedAccepted = acceptedStream.selectKey((key, value) -> value.getPayload().getProjectId());
         KStream<String, TradeRequestRejectedEvent> keyedRejected = rejectedStream.selectKey((key, value) -> value.getPayload().getProjectId());
@@ -61,7 +77,7 @@ public class TradeFailureDetection {
                 .to("TRADE_HIGH_FAILURE_RATE", Produced.with(Serdes.String(), new JsonSerde<>(TradeProjectHighFailureRateEvent.class)));
     }
 
-    public static void detectBuyerFailureRate(KStream<String, TradeRequestAcceptedEvent> acceptedStream, KStream<String, TradeRequestRejectedEvent> rejectedStream) {
+    private static void detectBuyerFailureRate(KStream<String, TradeRequestAcceptedEvent> acceptedStream, KStream<String, TradeRequestRejectedEvent> rejectedStream) {
         // projectId를 기준으로 키 재설정
         KStream<String, TradeRequestAcceptedEvent> keyedAccepted = acceptedStream.selectKey((key, value) -> value.getPayload().getBuyerAddress());
         KStream<String, TradeRequestRejectedEvent> keyedRejected = rejectedStream.selectKey((key, value) -> value.getPayload().getBuyerAddress());
@@ -109,7 +125,7 @@ public class TradeFailureDetection {
                 .to("TRADE_HIGH_FAILURE_RATE", Produced.with(Serdes.String(), new JsonSerde<>(TradeUserHighFailureRateEvent.class)));
     }
 
-    public static void detectSellerFailureRate(KStream<String, TradeRequestAcceptedEvent> acceptedStream, KStream<String, TradeRequestRejectedEvent> rejectedStream) {
+    private static void detectSellerFailureRate(KStream<String, TradeRequestAcceptedEvent> acceptedStream, KStream<String, TradeRequestRejectedEvent> rejectedStream) {
         // projectId를 기준으로 키 재설정
         KStream<String, TradeRequestAcceptedEvent> keyedAccepted = acceptedStream.selectKey((key, value) -> value.getPayload().getSellerAddress());
         KStream<String, TradeRequestRejectedEvent> keyedRejected = rejectedStream.selectKey((key, value) -> value.getPayload().getSellerAddress());
