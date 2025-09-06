@@ -14,15 +14,7 @@ import java.util.Objects;
 
 public class TradeFailureDetection {
 
-    public static void detectTradeFailure(KStream<String, TradeEvent> events) {
-        // 이벤트 유형에 따라 스트림 분기 및 명확한 캐스팅
-        KStream<String, TradeRequestAcceptedEvent> acceptedEvents = events
-                .filter((key, value) -> value instanceof TradeRequestAcceptedEvent)
-                .mapValues((key, value) -> (TradeRequestAcceptedEvent) value);
-
-        KStream<String, TradeRequestRejectedEvent> rejectedEvents = events
-                .filter((key, value) -> value instanceof TradeRequestRejectedEvent)
-                .mapValues((key, value) -> (TradeRequestRejectedEvent) value);
+    public static void detectTradeFailure(KStream<String, TradeRequestAcceptedEvent> acceptedEvents, KStream<String, TradeRequestRejectedEvent> rejectedEvents) {
 
         detectProjectFailureRate(acceptedEvents, rejectedEvents);
         detectBuyerFailureRate(acceptedEvents, rejectedEvents);

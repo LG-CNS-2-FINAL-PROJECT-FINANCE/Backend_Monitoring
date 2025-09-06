@@ -5,6 +5,7 @@ import com.ddiring.Backend_Monitoring.event.dto.consumer.trade.TradeRequestAccep
 import com.ddiring.Backend_Monitoring.event.dto.consumer.trade.TradeRequestRejectedEvent;
 import com.ddiring.Backend_Monitoring.service.FraudDetection.TradeFailureDetection;
 import com.ddiring.Backend_Monitoring.service.FraudDetection.TradeFrequencyDetection;
+import com.ddiring.Backend_Monitoring.service.FraudDetection.TradeHighValueDetection;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.common.serialization.Serdes;
@@ -27,8 +28,19 @@ public class FraudDetectionService {
 
             // 모든 이벤트를 TradeEvent 상위 클래스로 역직렬화
             KStream<String, TradeEvent> tradeEvents = builder.stream("TRADE", Consumed.with(Serdes.String(), new JsonSerde<>(TradeEvent.class)));
-            TradeFailureDetection.detectTradeFailure(tradeEvents);
-            TradeFrequencyDetection.detectTradeFrequency(tradeEvents);
+
+            // 이벤트 유형에 따라 스트림 분기 및 명확한 캐스팅
+            KStream<String, TradeRequestAcceptedEvent> acceptedEvents = tradeEvents
+                    .filter((key, value) -> value instanceof TradeRequestAcceptedEvent)
+                    .mapValues((key, value) -> (TradeRequestAcceptedEvent) value);
+
+            KStream<String, TradeRequestRejectedEvent> rejectedEvents = tradeEvents
+                    .filter((key, value) -> value instanceof TradeRequestRejectedEvent)
+                    .mapValues((key, value) -> (TradeRequestRejectedEvent) value);
+
+            TradeFailureDetection.detectTradeFailure(acceptedEvents, rejectedEvents);
+            TradeFrequencyDetection.detectTradeFrequency(acceptedEvents, rejectedEvents);
+            TradeHighValueDetection.detectHighValueTrade(acceptedEvents, rejectedEvents);
 
         } catch (Exception e) {
             throw new RuntimeException("[FraudDetection] 이상 거래 탐지 설정 중 오류 발생");

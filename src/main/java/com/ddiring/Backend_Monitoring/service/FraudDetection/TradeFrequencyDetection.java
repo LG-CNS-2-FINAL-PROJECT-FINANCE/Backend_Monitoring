@@ -17,16 +17,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @Slf4j
 public class TradeFrequencyDetection {
 
-    public static void detectTradeFrequency(KStream<String, TradeEvent> events) {
-        // 이벤트 유형에 따라 스트림 분기 및 명확한 캐스팅
-        KStream<String, TradeRequestAcceptedEvent> acceptedEvents = events
-                .filter((key, value) -> value instanceof TradeRequestAcceptedEvent)
-                .mapValues((key, value) -> (TradeRequestAcceptedEvent) value);
-
-        KStream<String, TradeRequestRejectedEvent> rejectedEvents = events
-                .filter((key, value) -> value instanceof TradeRequestRejectedEvent)
-                .mapValues((key, value) -> (TradeRequestRejectedEvent) value);
-
+    public static void detectTradeFrequency(KStream<String, TradeRequestAcceptedEvent> acceptedEvents, KStream<String, TradeRequestRejectedEvent> rejectedEvents) {
         KTable<Windowed<String>, Long> accpetedCounts = acceptedEvents.groupByKey().windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofHours(1))).count();
         KTable<Windowed<String>, Long> rejectedCounts = rejectedEvents.groupByKey().windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofHours(1))).count();
 
