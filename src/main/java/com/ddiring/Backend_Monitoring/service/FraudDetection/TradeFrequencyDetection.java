@@ -82,7 +82,7 @@ public class TradeFrequencyDetection {
                     );
                 })
                 .selectKey((windowedKey, value) -> windowedKey.key() + "@" + windowedKey.window().start() + "-" + windowedKey.window().end())
-                .to("TRADE_FREQUENCY_RATE", Produced.with(Serdes.String(), new JsonSerde<>(TradeUserFrequencyRateEvent.class)));
+                .to(TradeUserFrequencyRateEvent.TOPIC, Produced.with(Serdes.String(), new JsonSerde<>(TradeUserFrequencyRateEvent.class)));
     }
 
     private static void detectSellerFrequencyRate(Long totalEventCount, KStream<String, TradeRequestAcceptedEvent> acceptedStream, KStream<String, TradeRequestRejectedEvent> rejectedStream) {
@@ -132,6 +132,6 @@ public class TradeFrequencyDetection {
                     );
                 })
                 .selectKey((windowedKey, value) -> windowedKey.key() + "@" + windowedKey.window().start() + "-" + windowedKey.window().end())
-                .to("TRADE_FREQUENCY_RATE", Produced.with(Serdes.String(), new JsonSerde<>(TradeUserFrequencyRateEvent.class)));
+                .to(TradeUserFrequencyRateEvent.TOPIC, Produced.with(Serdes.String(), new JsonSerde<>(TradeUserFrequencyRateEvent.class)));
     }
 }

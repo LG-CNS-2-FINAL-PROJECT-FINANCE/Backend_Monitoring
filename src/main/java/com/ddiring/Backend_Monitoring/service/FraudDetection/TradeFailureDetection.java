@@ -64,7 +64,7 @@ public class TradeFailureDetection {
                     );
                 })
                 .selectKey((windowedKey, value) -> windowedKey.key() + "@" + windowedKey.window().start() + "-" + windowedKey.window().end())
-                .to("TRADE_HIGH_FAILURE_RATE", Produced.with(Serdes.String(), new JsonSerde<>(TradeProjectHighFailureRateEvent.class)));
+                .to(TradeProjectHighFailureRateEvent.TOPIC, Produced.with(Serdes.String(), new JsonSerde<>(TradeProjectHighFailureRateEvent.class)));
     }
 
     private static void detectBuyerFailureRate(KStream<String, TradeRequestAcceptedEvent> acceptedStream, KStream<String, TradeRequestRejectedEvent> rejectedStream) {
@@ -110,7 +110,7 @@ public class TradeFailureDetection {
                     );
                 })
                 .selectKey((windowedKey, value) -> windowedKey.key() + "@" + windowedKey.window().start() + "-" + windowedKey.window().end())
-                .to("TRADE_HIGH_FAILURE_RATE", Produced.with(Serdes.String(), new JsonSerde<>(TradeUserHighFailureRateEvent.class)));
+                .to(TradeUserHighFailureRateEvent.TOPIC, Produced.with(Serdes.String(), new JsonSerde<>(TradeUserHighFailureRateEvent.class)));
     }
 
     private static void detectSellerFailureRate(KStream<String, TradeRequestAcceptedEvent> acceptedStream, KStream<String, TradeRequestRejectedEvent> rejectedStream) {
@@ -156,6 +156,6 @@ public class TradeFailureDetection {
                     );
                 })
                 .selectKey((windowedKey, value) -> windowedKey.key() + "@" + windowedKey.window().start() + "-" + windowedKey.window().end())
-                .to("TRADE_HIGH_FAILURE_RATE", Produced.with(Serdes.String(), new JsonSerde<>(TradeUserHighFailureRateEvent.class)));
+                .to(TradeUserHighFailureRateEvent.TOPIC, Produced.with(Serdes.String(), new JsonSerde<>(TradeUserHighFailureRateEvent.class)));
     }
 }
