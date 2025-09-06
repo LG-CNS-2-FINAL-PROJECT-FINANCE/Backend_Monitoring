@@ -15,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class TradeProjectHighFailureRateEvent extends FraudDetectionEvent {
-    public static final String TOPIC = "TRADE_HIGH_FAILURE_RATE";
+    public static final String TOPIC = "DETECT_TRADE_FRAUD";
 
     private TradeProjectHighFailureRatePayload payload;
 
@@ -32,7 +32,7 @@ public class TradeProjectHighFailureRateEvent extends FraudDetectionEvent {
     }
 
     public static TradeProjectHighFailureRateEvent of (String projectId, Double failureRate, Long failedTradeCount, Long totalTradeCount, Long timeWindowMinutes) {
-        String eventType = TOPIC + ".BASE_BY_PROJECT";
+        String eventType = TOPIC + ".HIGH_FAILURE_RATE.BASE_BY_PROJECT";
         String description = String.format("Project ID %s has a high trade failure rate of %.2f%% over the last %d minutes.", projectId, failureRate * 100, timeWindowMinutes);
 
         return TradeProjectHighFailureRateEvent.builder()

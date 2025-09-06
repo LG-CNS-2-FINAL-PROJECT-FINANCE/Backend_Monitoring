@@ -14,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class TradeUserHighFailureRateEvent extends FraudDetectionEvent {
-    public static final String TOPIC = "TRADE_HIGH_FAILURE_RATE";
+    public static final String TOPIC = "DETECT_TRADE_FRAUD";
 
     private TradeUserHighFailureRatePayload payload;
 
@@ -31,7 +31,7 @@ public class TradeUserHighFailureRateEvent extends FraudDetectionEvent {
     }
 
     public static TradeUserHighFailureRateEvent ofSeller (String userAddress, Double failureRate, Long failedTradeCount, Long totalTradeCount, Long timeWindowMinutes) {
-        String eventType = TOPIC + ".BASE_BY_SELLER";
+        String eventType = TOPIC + ".HIGH_FAILURE_RATE.BASE_BY_SELLER";
         String description = String.format("Seller %s has a high trade failure rate of %.2f%% with %d failed trades out of %d total trades in the last %d minutes.",
                 userAddress, failureRate * 100, failedTradeCount, totalTradeCount, timeWindowMinutes);
 
@@ -53,7 +53,7 @@ public class TradeUserHighFailureRateEvent extends FraudDetectionEvent {
     }
 
     public static TradeUserHighFailureRateEvent ofBuyer (String userAddress, Double failureRate, Long failedTradeCount, Long totalTradeCount, Long timeWindowMinutes) {
-        String eventType = TOPIC + ".BASE_BY_BUYER";
+        String eventType = TOPIC + ".HIGH_FAILURE_RATE.BASE_BY_BUYER";
         String description = String.format("Buyer %s has a high trade failure rate of %.2f%% with %d failed trades out of %d total trades in the last %d minutes.",
                 userAddress, failureRate * 100, failedTradeCount, totalTradeCount, timeWindowMinutes);
 

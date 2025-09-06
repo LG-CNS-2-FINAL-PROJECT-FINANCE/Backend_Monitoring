@@ -14,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class TradeUserFrequencyRateEvent extends FraudDetectionEvent {
-    public static final String TOPIC = "FRAUD_TRADE_FREQUENCY_RATE";
+    public static final String TOPIC = "DETECT_TRADE_FRAUD";
 
     private TradeUserFrequencyRatePayload payload;
 
@@ -31,7 +31,7 @@ public class TradeUserFrequencyRateEvent extends FraudDetectionEvent {
     }
 
     public static TradeUserFrequencyRateEvent ofBuyer(String userAddress, long totalCount, long totalEventCount, double failureRate) {
-        String eventType = TOPIC + ".BASE_BY_BUYER";
+        String eventType = TOPIC + ".HIGH_FREQUENCY_RATE.BASE_BY_BUYER";
         String description = String.format("Buyer %s has a trade frequency rate of %.2f%% with %d trades out of %d total events.",
                 userAddress, (double) totalCount / totalEventCount * 100, totalCount, totalEventCount);
 
@@ -50,7 +50,7 @@ public class TradeUserFrequencyRateEvent extends FraudDetectionEvent {
     }
 
     public static TradeUserFrequencyRateEvent ofSeller(String userAddress, Long totalCount, Long totalEventCount, Double failureRate, Long timeWindowMinutes) {
-        String eventType = TOPIC + ".BASE_BY_SELLER";
+        String eventType = TOPIC + ".HIGH_FREQUENCY_RATE.BASE_BY_SELLER";
         String description = String.format("Seller %s has a trade frequency rate of %.2f%% with %d trades out of %d total events.",
                 userAddress, (double) totalCount / totalEventCount * 100, totalCount, totalEventCount);
 
