@@ -43,7 +43,7 @@ public class TradeFrequencyDetection {
         detectBuyerFrequencyRate(atomicTotalEventCount.get(), acceptedEvents, rejectedEvents);
         detectSellerFrequencyRate(atomicTotalEventCount.get(), acceptedEvents, rejectedEvents);
     }
-    
+
     private static void detectBuyerFrequencyRate(Long totalEventCount, KStream<String, TradeRequestAcceptedEvent> acceptedStream, KStream<String, TradeRequestRejectedEvent> rejectedStream) {
         KStream<String, TradeRequestAcceptedEvent> keyedAccepted = acceptedStream.selectKey((key, value) -> value.getPayload().getBuyerAddress());
         KStream<String, TradeRequestRejectedEvent> keyedRejected = rejectedStream.selectKey((key, value) -> value.getPayload().getBuyerAddress());

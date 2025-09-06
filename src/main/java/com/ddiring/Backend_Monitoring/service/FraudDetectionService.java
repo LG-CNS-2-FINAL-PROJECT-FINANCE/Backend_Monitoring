@@ -4,6 +4,7 @@ import com.ddiring.Backend_Monitoring.event.dto.consumer.trade.TradeEvent;
 import com.ddiring.Backend_Monitoring.event.dto.consumer.trade.TradeRequestAcceptedEvent;
 import com.ddiring.Backend_Monitoring.event.dto.consumer.trade.TradeRequestRejectedEvent;
 import com.ddiring.Backend_Monitoring.service.FraudDetection.TradeFailureDetection;
+import com.ddiring.Backend_Monitoring.service.FraudDetection.TradeFrequencyDetection;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.common.serialization.Serdes;
@@ -27,6 +28,7 @@ public class FraudDetectionService {
             // 모든 이벤트를 TradeEvent 상위 클래스로 역직렬화
             KStream<String, TradeEvent> tradeEvents = builder.stream("TRADE", Consumed.with(Serdes.String(), new JsonSerde<>(TradeEvent.class)));
             TradeFailureDetection.detectTradeFailure(tradeEvents);
+            TradeFrequencyDetection.detectTradeFrequency(tradeEvents);
 
         } catch (Exception e) {
             throw new RuntimeException("[FraudDetection] 이상 거래 탐지 설정 중 오류 발생");
