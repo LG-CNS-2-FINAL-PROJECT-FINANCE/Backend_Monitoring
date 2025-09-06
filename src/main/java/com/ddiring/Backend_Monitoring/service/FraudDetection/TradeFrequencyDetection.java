@@ -39,11 +39,11 @@ public class TradeFrequencyDetection {
                 }
             );
 
-        // 두 메소드를 모두 호출하여 구매자와 판매자 빈도를 모두 감지하도록 수정
+        // 구매자 및 판매자 빈도 비율 탐지
         detectBuyerFrequencyRate(atomicTotalEventCount.get(), acceptedEvents, rejectedEvents);
+        detectSellerFrequencyRate(atomicTotalEventCount.get(), acceptedEvents, rejectedEvents);
     }
-
-
+    
     private static void detectBuyerFrequencyRate(Long totalEventCount, KStream<String, TradeRequestAcceptedEvent> acceptedStream, KStream<String, TradeRequestRejectedEvent> rejectedStream) {
         KStream<String, TradeRequestAcceptedEvent> keyedAccepted = acceptedStream.selectKey((key, value) -> value.getPayload().getBuyerAddress());
         KStream<String, TradeRequestRejectedEvent> keyedRejected = rejectedStream.selectKey((key, value) -> value.getPayload().getBuyerAddress());
@@ -94,4 +94,53 @@ public class TradeFrequencyDetection {
                 .to("TRADE_FREQUENCY_RATE", Produced.with(Serdes.String(), new JsonSerde<>(TradeUserFrequencyRateEvent.class)));
     }
 
+    private static void detectSellerFrequencyRate(Long totalEventCount, KStream<String, TradeRequestAcceptedEvent> acceptedStream, KStream<String, TradeRequestRejectedEvent> rejectedStream) {
+        KStream<String, TradeRequestAcceptedEvent> keyedAccepted = acceptedStream.selectKey((key, value) -> value.getPayload().getSellerAddress());
+        KStream<String, TradeRequestRejectedEvent> keyedRejected = rejectedStream.selectKey((key, value) -> value.getPayload().getSellerAddress());
+
+        KTable<Windowed<String>, Long> sellerSuccessCounts = keyedAccepted.groupByKey().windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofHours(1))).count();
+        KTable<Windowed<String>, Long> sellerFailureCounts = keyedRejected.groupByKey().windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofHours(1))).count();
+
+        sellerSuccessCounts.join(
+                        sellerFailureCounts,
+                        (successValue, failureValue) -> {
+                            long sellerSuccessCount = successValue != null ? successValue : 0;
+                            long sellerFailureCount = failureValue != null ? failureValue : 0;
+                            long sellerTotalCount = sellerSuccessCount + sellerFailureCount;
+
+                            if (totalEventCount > 0 && sellerTotalCount > 0) {
+                                double sellerFrequencyRate = (double) sellerTotalCount / totalEventCount;
+                                if (sellerFrequencyRate > 0.1) { // 예시 임계값
+                                    log.info("[FraudDetection] 이상 패턴 탐지 - 판매자 주소: {}, 성공 횟수: {}, 실패 횟수: {}, 빈도 비율: {}",
+                                            (successValue != null ? successValue : "N/A"),
+                                            sellerSuccessCount,
+                                            sellerFailureCount,
+                                            sellerFrequencyRate);
+
+                                    return new Object() {
+                                        public final double frequencyRate = sellerFrequencyRate;
+                                        public final long userTotalCount = sellerTotalCount;
+                                        public final long eventCount = totalEventCount;
+                                        public final long timeWindowMinutes = 60;
+                                    };
+                                }
+                            }
+                            return null;
+                        }
+                )
+                .filter((windowedKey, value) -> value != null)
+                .toStream()
+                .mapValues((windowedKey, value) -> {
+                    String sellerAddress = windowedKey.key();
+
+                    return TradeUserFrequencyRateEvent.ofBuyer(
+                            sellerAddress,
+                            value.userTotalCount,
+                            value.eventCount,
+                            value.frequencyRate
+                    );
+                })
+                .selectKey((windowedKey, value) -> windowedKey.key() + "@" + windowedKey.window().start() + "-" + windowedKey.window().end())
+                .to("TRADE_FREQUENCY_RATE", Produced.with(Serdes.String(), new JsonSerde<>(TradeUserFrequencyRateEvent.class)));
+    }
 }
