@@ -61,11 +61,9 @@ public class TradeFailureDetection {
                 .filter((windowedKey, value) -> value != null)
                 .toStream()
                 .mapValues((windowedKey, value) -> {
-                    String projectId = windowedKey.key(); // Windowed<String>에서 키를 가져옴
-                    String description = "High failure rate detected for Trade: " + Objects.requireNonNull(value).failureRate;
+                    String projectId = windowedKey.key();
 
                     return TradeProjectHighFailureRateEvent.of(
-                            description,
                             projectId,
                             value.failureRate,
                             value.failedCount,
@@ -110,10 +108,8 @@ public class TradeFailureDetection {
                 .toStream()
                 .mapValues((windowedKey, value) -> {
                     String buyerAddress = windowedKey.key(); // Windowed<String>에서 키를 가져옴
-                    String description = "High failure rate detected for Trade: " + Objects.requireNonNull(value).failureRate;
 
                     return TradeUserHighFailureRateEvent.ofBuyer(
-                            description,
                             buyerAddress,
                             value.failureRate,
                             value.failedCount,
@@ -158,10 +154,8 @@ public class TradeFailureDetection {
                 .toStream()
                 .mapValues((windowedKey, value) -> {
                     String sellerAddress = windowedKey.key(); // Windowed<String>에서 키를 가져옴
-                    String description = "High failure rate detected for Trade: " + Objects.requireNonNull(value).failureRate;
 
                     return TradeUserHighFailureRateEvent.ofSeller(
-                            description,
                             sellerAddress,
                             value.failureRate,
                             value.failedCount,

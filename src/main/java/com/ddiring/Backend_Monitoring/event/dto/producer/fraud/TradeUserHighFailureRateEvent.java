@@ -30,8 +30,10 @@ public class TradeUserHighFailureRateEvent extends FraudDetectionEvent {
         private Long timeWindowMinutes;
     }
 
-    public static TradeUserHighFailureRateEvent ofSeller (String description, String userAddress, Double failureRate, Long failedTradeCount, Long totalTradeCount, Long timeWindowMinutes) {
+    public static TradeUserHighFailureRateEvent ofSeller (String userAddress, Double failureRate, Long failedTradeCount, Long totalTradeCount, Long timeWindowMinutes) {
         String eventType = TOPIC + ".BASE_BY_SELLER";
+        String description = String.format("Seller %s has a high trade failure rate of %.2f%% with %d failed trades out of %d total trades in the last %d minutes.",
+                userAddress, failureRate * 100, failedTradeCount, totalTradeCount, timeWindowMinutes);
 
         return TradeUserHighFailureRateEvent.builder()
                 .eventId(UUID.randomUUID().toString())
@@ -50,8 +52,10 @@ public class TradeUserHighFailureRateEvent extends FraudDetectionEvent {
                 .build();
     }
 
-    public static TradeUserHighFailureRateEvent ofBuyer (String description, String userAddress, Double failureRate, Long failedTradeCount, Long totalTradeCount, Long timeWindowMinutes) {
+    public static TradeUserHighFailureRateEvent ofBuyer (String userAddress, Double failureRate, Long failedTradeCount, Long totalTradeCount, Long timeWindowMinutes) {
         String eventType = TOPIC + ".BASE_BY_BUYER";
+        String description = String.format("Buyer %s has a high trade failure rate of %.2f%% with %d failed trades out of %d total trades in the last %d minutes.",
+                userAddress, failureRate * 100, failedTradeCount, totalTradeCount, timeWindowMinutes);
 
         return TradeUserHighFailureRateEvent.builder()
                 .eventId(UUID.randomUUID().toString())
