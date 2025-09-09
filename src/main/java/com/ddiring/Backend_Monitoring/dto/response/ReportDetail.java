@@ -25,6 +25,7 @@ public class ReportDetail {
     private String content;
 
     private Monitoring.Status status;
+    private String processContent;
 
     public static ReportDetail from(Monitoring m) {
         return ReportDetail.builder()
@@ -38,6 +39,7 @@ public class ReportDetail {
                 .reportType(m.getReportType())
                 .content(m.getContent())
                 .status(m.getStatus())
+                .processContent(m.getProcessContent())
                 .build();
     }
 }
